@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "MapplsAPICore",
+        "repositoryURL": "https://github.com/mappls-api/mappls-api-core-ios-distribution.git",
+        "state": {
+          "branch": null,
+          "revision": "5742ec7bccdcea8973aeed1b8f0441544979ec79",
+          "version": "2.0.4"
+        }
+      },
+      {
+        "package": "MapplsAPIKit",
+        "repositoryURL": "https://github.com/mappls-api/mappls-api-kit-ios-distribution.git",
+        "state": {
+          "branch": null,
+          "revision": "63453a0f4cdad9d71f196bdb9541c16e6e48ac00",
+          "version": "3.0.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
