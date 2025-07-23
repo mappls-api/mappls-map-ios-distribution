@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/mappls-api/mappls-api-core-ios-distribution.git",
         "state": {
           "branch": null,
-          "revision": "5742ec7bccdcea8973aeed1b8f0441544979ec79",
-          "version": "2.0.4"
+          "revision": "8c1c2d8ac2c675e74486865218520810b01c973d",
+          "version": "2.0.5"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/mappls-api/mappls-api-kit-ios-distribution.git",
         "state": {
           "branch": null,
-          "revision": "63453a0f4cdad9d71f196bdb9541c16e6e48ac00",
-          "version": "3.0.0"
+          "revision": "b0803c274207e9169158397d8ffbc1bbbdb3ff06",
+          "version": "3.0.1"
         }
       }
     ]
