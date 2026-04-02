@@ -32,6 +32,7 @@ Mappls's Map SDK for iOS lets you easily add Mappls Map and web services to your
 ## [Version History](#Version-History)
 
 | Version | Dated | Description |
+| `6.1.4`| 02 Apr 2026 | - Fixed mappls pin issue <br> Added support to hide/show 3d building. |
 | `6.1.3`| 1 Apr 2026 | - Fixed carplay fullscreen map issue. <br> Added 3D building plugin to hide and show 3D building. |
 | `6.0.1`| 23 July 2025 | - Added a provision to restrict setting the default style. |
 | `6.0.0`| 06 Jun 2025 | - Updated minimum iOS deployment target to 13.0 <br> - Authentication and authorization mechanisms have been revised. |
