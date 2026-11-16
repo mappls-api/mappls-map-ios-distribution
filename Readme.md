@@ -1,141 +1,262 @@
-[<img src="https://about.mappls.com/images/mappls-b-logo.svg" height="80"/> </p>](https://www.mapmyindia.com/api)
+[<img src="https://about.mappls.com/images/mappls-b-logo.svg" height="80"/>](https://about.mappls.com/api/)
 
-# [Mappls Map SDK]()
+# Mappls Map SDK for iOS
 
-## [Introduction]()
+`MapplsMap` adds interactive Mappls maps to your iOS app. Show the map, add markers and shapes, place them with [Mappls Pins](MapplsGuides/MapplsPin.md), switch [map styles](MapplsGuides/MapStyles.md), and show [indoor floors](MapplsGuides/IndoorMaps.md) and [live traffic](MapplsGuides/TrafficLayers.md). Maps work in UIKit and SwiftUI, from Swift and Objective-C.
 
-This repository contains a sample project of an app built for iOS, which is based on Mappls's Map and other differennt SDKs.
+## Contents
 
-**Welcome to the Mappls iOS SDK**
+- [Requirements](#requirements)
+- [Version history](#version-history)
+- [Installation](#installation)
+- [Quick start](#quick-start)
+- [Guides](#guides)
+- [Map interactions](#map-interactions)
+- [Map features](#map-features)
+- [Map events](#map-events)
+- [SDK error codes](#sdk-error-codes)
+- [Map tap events](#map-tap-events)
+- [Markers](#map-overlays)
+- [Polylines](#polylines) · [Polygons](#polygons) · [Map camera](#map-camera) · [Shape styling](#miscellaneous)
+- [Cluster based authentication](#cluster-based-authentication)
+- [SwiftUI](#swiftui)
+- [Support](#support)
 
-Explore the largest directory of APIs & SDKs for maps, routes and search.
+## Requirements
 
-Mappls's APIs, SDKs, and live updating map data available for [238 nations](https://github.com/mappls-api/mapmyindia-rest-api/blob/master/docs/countryISO.md) give developers tools to build better mapping, navigation, and search experiences across platforms.
+- iOS 13.0 or later
+- Xcode 15 or later. To support iOS 13 or 14 in your app, use Xcode 26.x or earlier: Xcode 27 only builds apps for iOS 15.0 and later.
+- Swift Package Manager
+- Your app's Mappls configuration files (`.conf` and `.olf`). See [Quick start](#2-add-your-mappls-configuration-files).
 
-In this section you will find documentation for :-
-
-- Detailed information about integration of Vector iOS Map.
-- REST APIs module is a custom module for developers to consume our RESTful APIs within their applications, easily, and without having to develop such 
-  functionality from scratch.
-- Detailed information related to how to integrate Mappls Widgets.
-
-# [Map SDK](#Map-SDK)
-
-`MapplsMap` is a SDK to display map, mark locations, enhance with custom data and even draw routes or other shapes on top.
-
-## [Getting Started](#Getting-Started)
-
-Mappls's Map SDK for iOS lets you easily add Mappls Map and web services to your own iOS app. Mappls's Map SDK for iOS supports iOS SDK 9.0 and above and Xcode 10.1 or later. You can have a look at the map and features you will get in your own app by using the Mappls's Maps app for iOS. The SDK handles map tiles download and their display along with a bunch of controls and native gestures.
-
-
-
-## [Version History](#Version-History)
+## Version History
 
 | Version | Dated | Description |
 | :------ | :---- | :---------- |
+| `7.0.1`| 16 Nov 2026 | - Fixed map labels in regional languages, such as Hindi, being shown on a single line. |
+| `7.0.0`| 11 Nov 2026 | - Updated map rendering engine, with performance improvements and bug fixes. <br> - Minimum iOS deployment target is 13.0. <br> - `MapplsAPICore` and `MapplsAPIKit` are no longer installed automatically. Add them as separate packages, see [Installation](#installation). <br> - Objective-C: `MapplsMap.h` is no longer in the framework. Use `@import MapplsMap;`. <br> - Added SDK logging. |
 | `6.1.5`| 02 Jul 2026 | - Fixed an issue where regional language map labels were displayed on a single line. |
 | `6.1.4`| 02 Apr 2026 | - Fixed mappls pin issue <br> Added support to hide/show 3d building. |
 | `6.1.3`| 1 Apr 2026 | - Fixed carplay fullscreen map issue. <br> Added 3D building plugin to hide and show 3D building. |
 | `6.0.1`| 23 July 2025 | - Added a provision to restrict setting the default style. |
 | `6.0.0`| 06 Jun 2025 | - Updated minimum iOS deployment target to 13.0 <br> - Authentication and authorization mechanisms have been revised. |
-| --- | --- | --- |
 
-## [Setup your Project](#Setup-your-Project)
+See [CHANGELOG.md](CHANGELOG.md) for details.
 
-#### Create a new project in Xcode.
+## Installation
 
-To add a package dependency to your Xcode project, select File > Swift Packages > Add Package Dependency and enter its repository URL. See [Adding Package Dependencies to Your App](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app).
+`MapplsMap` is distributed with [Swift Package Manager](https://www.swift.org/documentation/package-manager/). It needs three packages:
 
-### [Dependencies](#Dependencies)
+| Package | Repository URL | Version |
+| :------ | :------------- | :------ |
+| `MapplsMap` | `https://github.com/mappls-api/mappls-map-ios-distribution` | `7.0.1` |
+| `MapplsAPICore` | `https://github.com/mappls-api/mappls-api-core-ios-distribution` | `2.1.6` or later |
+| `MapplsAPIKit` | `https://github.com/mappls-api/mappls-api-kit-ios-distribution` | `3.0.10` or later |
 
-This library depends upon `MapplsAPICore`, `MapplsAPIKit`. All dependent libraries will be automatically.
+The `MapplsMap` package contains only the `MapplsMap` framework. It does not declare `MapplsAPICore` and `MapplsAPIKit` as dependencies, so add all three. If either one is missing, the app crashes at launch with `dyld: Library not loaded: @rpath/MapplsAPICore.framework/MapplsAPICore` (or `MapplsAPIKit`).
 
-- For iOS9 or later, make this change to your info.plist (Project target > info.plist > Add row and set keys `NSLocationAlwaysAndWhenInUseUsageDescription`, `NSLocationWhenInUseUsageDescription`, `NSLocationAlwaysUsageDescription`). As follows
-    ```
-    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Your location is required</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Your location is required</string>
-    <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Your location is required</string>
-    ```
-    Message should be appropriate, according to use of your application.
+1. In Xcode, open your project and select **File > Add Package Dependencies…**.
+2. Paste `https://github.com/mappls-api/mappls-map-ios-distribution` into the search field.
+3. Set **Dependency Rule** to **Exact Version** `7.0.1` (or **Up to Next Major Version** from `7.0.1`) and click **Add Package**.
+4. In the next dialog, add the `MapplsMap` library to your app target and click **Add Package**.
+5. Repeat steps 1–4 for `https://github.com/mappls-api/mappls-api-core-ios-distribution` (library `MapplsAPICore`) and `https://github.com/mappls-api/mappls-api-kit-ios-distribution` (library `MapplsAPIKit`).
+6. Select your app target, open **General > Frameworks, Libraries, and Embedded Content**, and check that `MapplsMap`, `MapplsAPICore` and `MapplsAPIKit` are all listed.
 
-### [MapplsMap](#mapplsmap)
+See [Adding package dependencies to your app](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app) for more detail.
 
-A class `MapplsMapAuthenticator` can be used to authorize the Map.
+## Quick start
 
-It is recommended to call this method before initilizing `MapplsMapView`.
+These steps take you from an empty project to a map on screen.
 
-Swift
+### 1. Install the packages
+
+Add `MapplsMap`, `MapplsAPICore` and `MapplsAPIKit` as described in [Installation](#installation).
+
+### 2. Add your Mappls configuration files
+
+Your app is authorized with two files that Mappls issues for your app's bundle identifier: a `.conf` file and an `.olf` file. Contact [apisupport@mappls.com](mailto:apisupport@mappls.com) if you don't have them yet.
+
+1. Drag both files into your Xcode project.
+2. In the dialog, check **Copy items if needed** and select your **app target** under **Add to targets**.
+3. Check that both files are listed in your target's **Build Phases > Copy Bundle Resources**.
+
+> **Important:** the SDK stops the app with a fatal error at launch if the files are missing, damaged, or were issued for a different bundle identifier or team.
+
+### 3. Add location permissions (optional)
+
+If you show the user's location (`showsUserLocation`), add a usage description to your `Info.plist`. Write a message that explains why your app needs the location:
+
+```xml
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>Your location is shown on the map.</string>
+```
+
+Add `NSLocationAlwaysAndWhenInUseUsageDescription` as well if your app uses the location in the background.
+
+### 4. Initialize the SDK
+
+Initialize the SDK once, when the app starts and before you create a map view.
+
+#### Swift (UIKit app)
+
 ```swift
-MapplsMapAuthenticator.sharedManager().initializeSDKSession { isSucess, error in
-  if let error = error {
-  // Map cannot be initilize
-    print("error: \(error.localizedDescription)")
-  } else {
-    // Map is authorized sucessfully.
-  }
+import MapplsAPICore
+import UIKit
+
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // Finds the .conf and .olf files in the app bundle and loads them.
+        MapplsAPICoreManager().initializeSDK()
+        return true
+    }
 }
 ```
 
-Objective - C
+#### SwiftUI app
 
 ```swift
-[[MapplsMapAuthenticator sharedManager] initializeSDKSession:^(BOOL isSuccess, NSError * _Nullable error) {
-  if (isSuccess) {
-    // Map is authorized sucessfully.          
-  } else {
-    // Map cannot be initilize
-  }
-}];
+import MapplsAPICore
+import SwiftUI
 
+@main
+struct MyApp: App {
+    init() {
+        MapplsAPICoreManager().initializeSDK()
+    }
+
+    var body: some Scene {
+        WindowGroup { ContentView() }
+    }
+}
 ```
 
-Note: Although authorization of Map is done internally on initilizing `MapplsMapView`, **Using this in advance will reduce map loading time**
+#### Objective-C
 
-
-## [Usage](#Usage)
-
-## [Add a Mappls Map View](#Add-a-Mappls-Map-View)
-
-Map View on view controller can be added either using interface builder or programmatically.
-
-#### By Interface Builder 
-In a storyboard, add a view to your View Controller. In the Identity inspector, change its class to `MapplsMapView`.  
-**Note :-** Map style url need to be set at the time of load map  
-  
-#### By Programmatically 
-To add map on view Controller create an instance of `MapplsMapView`. and add this to view of `ViewController`.
-
-#### Objective C
 ```objectivec
-#import
-@interface ViewController () <MapplsMapViewDelegate>
-@end
-@implementation ViewController
+@import MapplsAPICore;
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [[MapplsAPICoreManager new] initializeSDKWithConfigPath:nil olfPath:nil];
+    return YES;
+}
 ```
+
+To load the files from somewhere other than the app bundle, pass their URLs: `MapplsAPICoreManager().initializeSDK(configPath: confURL, olfPath: olfURL)`.
+
+### 5. Show a map
+
+`MapplsMapView` authorizes itself and loads the default Mappls style when it is created.
+
 #### Swift
+
 ```swift
 import MapplsMap
+import UIKit
+
 class ViewController: UIViewController, MapplsMapViewDelegate {
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    let mapView = MapplsMapView(frame: view.bounds)
-    mapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-    view.addSubview(mapView)
-  }
-});
+    var mapView: MapplsMapView!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        mapView = MapplsMapView(frame: view.bounds)
+        mapView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        mapView.delegate = self
+        mapView.setCenter(CLLocationCoordinate2D(latitude: 28.551438, longitude: 77.265119),
+                          zoomLevel: 12, animated: false)
+        view.addSubview(mapView)
+    }
+
+    func mapView(_ mapView: MapplsMapView, authorizationCompleted isSuccess: Bool, withError error: Error?) {
+        if !isSuccess {
+            print("Map authorization failed: \(error?.localizedDescription ?? "unknown error")")
+        }
+    }
+}
 ```
 
-**Note** Also to handle app transport security exception add `NSAppTransportSecurity` in Info.plist of your project. As follows:
+#### Objective-C
+
+```objectivec
+@import MapplsMap;
+
+@interface ViewController () <MapplsMapViewDelegate>
+@property (nonatomic) MapplsMapView *mapView;
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.mapView = [[MapplsMapView alloc] initWithFrame:self.view.bounds];
+    self.mapView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.mapView.delegate = self;
+    [self.mapView setCenterCoordinate:CLLocationCoordinate2DMake(28.551438, 77.265119) zoomLevel:12 animated:NO];
+    [self.view addSubview:self.mapView];
+}
+
+- (void)mapView:(MapplsMapView *)mapView authorizationCompleted:(BOOL)isSuccess withError:(NSError *)error {
+    if (!isSuccess) {
+        NSLog(@"Map authorization failed: %@", error.localizedDescription);
+    }
+}
+
+@end
 ```
-<key>NSAppTransportSecurity</key>
-<dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-</dict>
+
+#### Interface Builder
+
+Add a **View** to your view controller, then in the **Identity inspector** set its **Class** to `MapplsMapView` and **Module** to `MapplsMap`. Connect its `delegate` outlet to your view controller.
+
+For SwiftUI, see [SwiftUI](#swiftui).
+
+### 6. Authorize in advance (optional)
+
+The map authorizes itself, but you can start authorization earlier, for example on the screen before the map. The map then loads faster:
+
+```swift
+import MapplsMap
+
+MapplsMapAuthenticator.sharedManager().initializeSDKSession { isSuccess, error in
+    if let error {
+        print("Authorization failed: \(error.localizedDescription)")
+    }
+}
 ```
+
+```objectivec
+[[MapplsMapAuthenticator sharedManager] initializeSDKSession:^(BOOL isSuccess, NSError * _Nullable error) {
+    if (!isSuccess) {
+        NSLog(@"Authorization failed: %@", error.localizedDescription);
+    }
+}];
+```
+
+If authorization fails, the map shows an error message with a **Retry** button. See [SDK error codes](#sdk-error-codes) for the possible errors.
+
+### Debugging
+
+Turn on SDK logs while you develop:
+
+```swift
+import MapplsAPICore
+import MapplsMap
+
+MapplsAccountManager.setIsEnableLogging(true)
+MGLLoggingConfiguration.shared.loggingLevel = .verbose
+```
+
+## Guides
+
+| Guide | What you'll learn |
+| :---- | :---------------- |
+| [Markers](MapplsGuides/Markers.md) | Add markers as annotations (custom images, views, callouts) or as style layers (icons, labels, colors from data, taps, clustering). |
+| [Polylines](MapplsGuides/Polylines.md) | Draw lines as annotations or as style layers (outline, zoom-based width, dashes, gradients, below the labels). |
+| [Mappls Pin](MapplsGuides/MapplsPin.md) | Add markers, center the map and move the camera with Mappls Pins, and get the Mappls Pin of a tapped place. |
+| [Map Styles](MapplsGuides/MapStyles.md) | List the available Mappls styles, switch styles, build a style picker, use your own style. |
+| [Indoor Maps](MapplsGuides/IndoorMaps.md) | Show building floors and position the floor selector. |
+| [Live Traffic](MapplsGuides/TrafficLayers.md) | Show live traffic and choose free flow, congestion, closures and incident icons. |
 
 ## [Map Interactions](#Map-Interactions)
 
@@ -146,7 +267,7 @@ Set zoom to 4 for country level display and 18 for house number display.
 #### Objective C
 
 ```objectivec
-[mapView setZoom:4];
+self.mapView.zoomLevel = 4;
 ```
 
 #### Swift
@@ -194,7 +315,9 @@ To get current location, use property `.userLocation.` its of type `MGLUserLocat
 #### Swift
 
 ```swift
-let userLocation: CLLocation = mapView.userLocation?.location
+if let location = mapView.userLocation?.location {
+    print(location.coordinate)
+}
 ```
 
 ### Tracking Mode
@@ -367,9 +490,7 @@ optional func mapView(_ mapView: MGLMapView, didFinishLoading style: MGLStyle)
 
 #### [-mapView:didTapPlaceWithMapplsPin:]()
 
-This delegate function gives `Mappls Pin`.
-
-This method is called on tap on map and gives either string value (Mappls Pin) or nil value (if no Mappls Pin found).
+Called when the user taps a labelled place on the map, with that place's Mappls Pin. See the [Mappls Pin guide](MapplsGuides/MapplsPin.md#get-the-mappls-pin-of-a-tapped-place) for an example.
 
 **Objective-C**
 ```objectivec
@@ -381,17 +502,28 @@ This method is called on tap on map and gives either string value (Mappls Pin) o
 optional func mapView(_ mapView: MGLMapView, didTapPlaceWithMapplsPin mapplsPin: String?)
 ```
 
-### [SDK Error Codes](#SDK-Error-Codes)
+## SDK Error Codes
 
-Map will fail with following error codes
+When authorization fails, `mapView(_:authorizationCompleted:withError:)` and `MapplsMapAuthenticator.initializeSDKSession` return an `NSError` with one of these codes:
 
-- MAPS_SDK_KEY_MISSING=1; //when map sdk key is not passed
-- REST_API_KEY_MISSING=2; //when rest api key is not passed
-- ATLAS_CLIENT_ID_MISSING=3; //when atlas client id is not passed
-- ATLAS_CLIENT_SECRET_MISSING=4; //when atlas client secret is not passed
-- ATLAS_GRANT_TYPE_MISSING=5; //* //when atlas grant type is not passed
-- AUTHENTICATION_FAILED=7; //when map fails to authenticate itself with Mappls server
-- UNKNOWN=8; // when map loading failed due to unknown error
+| Code | Message | What to do |
+| :--- | :------ | :--------- |
+| `1` | Method Not allowed | The map isn't part of your Mappls license. Contact [apisupport@mappls.com](mailto:apisupport@mappls.com). |
+| `7` | Map Info is not available | The map configuration could not be downloaded. Check the network connection and your `.conf` / `.olf` files, then retry. |
+| `8` | Public Key Expired. | The downloaded configuration has expired. Retry; if it keeps failing, contact support. |
+
+```swift
+func mapView(_ mapView: MapplsMapView, authorizationCompleted isSuccess: Bool, withError error: Error?) {
+    guard !isSuccess, let error = error as NSError? else { return }
+    print("Authorization failed (\(error.code)): \(error.localizedDescription)")
+}
+```
+
+To hide the built-in error message with the **Retry** button and show your own, call this before you create the map view:
+
+```swift
+MapplsAccountManager.setIsHiddenAuthorizationFailOverlay(true)
+```
 
 ### [Tracking User Location Events](#Tracking-User-Location-Events)
 
@@ -542,6 +674,8 @@ if tap.state == .ended {
 
 ## [Map Overlays](#Map-Overlays)
 
+> The [Markers guide](MapplsGuides/Markers.md) covers markers in more depth, both as annotations and as style layers (icons, labels, colors from data, taps and clustering).
+
 ### Add marker
 To show an annotation on map create an instance of `MGLPointAnnotation` and add that object to instance of `MapplsMapView` using method `addAnnotation.`.
 
@@ -608,6 +742,8 @@ return CustomCalloutView(representedObject: annotation)
 To create custom callout view create a class inherited from `.MGLCalloutView.` and `.UIView.`. Override draw function of `UIView` to design your own callout view.
 
 ## [Polylines](#Polylines)
+
+> The [Polylines guide](MapplsGuides/Polylines.md) covers lines in more depth, both as annotations and as style layers (outline, zoom-based width, dashes, gradients, drawing below labels).
 
 ### Add a Polyline
 
@@ -894,7 +1030,7 @@ let clusterId = MapplsAccountManager.clusterId()
 
 ## [SwiftUI](#SwiftUI)
 
-### [Create Map View](#Create-MAPPLS-Map-View)
+### [Create Map View](#create-map-view)
 
 1. In your project, add new SwiftUI View and name it MapView.swift
 2. In order to use native UIKit views in `SwiftUI` view, you must use [UIViewRepresentable](https://developer.apple.com/documentation/swiftui/uiviewrepresentable) wrapper. The instance of custom type which adopts UIViewRepresentable protocol is responsible for creation and management a UIView object in your SwiftUI interface.
@@ -972,7 +1108,9 @@ mapView.delegate = context.coordinator
 
 <br><br><br>
 
-## Our many happy customers:
+## Support
+
+### Our many happy customers
 
 ![](https://www.mapmyindia.com/api/img/logos1/PhonePe.png)![](https://www.mapmyindia.com/api/img/logos1/Arya-Omnitalk.png)![](https://www.mapmyindia.com/api/img/logos1/delhivery.png)![](https://www.mapmyindia.com/api/img/logos1/hdfc.png)![](https://www.mapmyindia.com/api/img/logos1/TVS.png)![](https://www.mapmyindia.com/api/img/logos1/Paytm.png)![](https://www.mapmyindia.com/api/img/logos1/FastTrackz.png)![](https://www.mapmyindia.com/api/img/logos1/ICICI-Pru.png)![](https://www.mapmyindia.com/api/img/logos1/LeanBox.png)![](https://www.mapmyindia.com/api/img/logos1/MFS.png)![](https://www.mapmyindia.com/api/img/logos1/TTSL.png)![](https://www.mapmyindia.com/api/img/logos1/Novire.png)![](https://www.mapmyindia.com/api/img/logos1/OLX.png)![](https://www.mapmyindia.com/api/img/logos1/sun-telematics.png)![](https://www.mapmyindia.com/api/img/logos1/Sensel.png)![](https://www.mapmyindia.com/api/img/logos1/TATA-MOTORS.png)![](https://www.mapmyindia.com/api/img/logos1/Wipro.png)![](https://www.mapmyindia.com/api/img/logos1/Xamarin.png)
 
